@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -26,6 +26,10 @@
       text-align: center;
     }
 
+    header h1 {
+      margin-bottom: 8px;
+    }
+
     main {
       max-width: 950px;
       margin: 20px auto;
@@ -40,46 +44,73 @@
       margin-bottom: 20px;
     }
 
-    .top-row {
+    .status-row {
       display: flex;
       justify-content: space-between;
       gap: 12px;
       flex-wrap: wrap;
-      margin-bottom: 12px;
-      font-weight: bold;
-    }
-
-    h2 {
-      margin-top: 0;
-    }
-
-    .question-block {
       margin-bottom: 18px;
-    }
-
-    .question-block p {
-      margin: 6px 0;
-      font-size: 18px;
       font-weight: bold;
     }
 
-    .hint-box {
+    .question-box {
       background: #f9fafb;
-      padding: 14px;
-      border-radius: 10px;
+      padding: 16px;
+      border-radius: 12px;
+      margin-bottom: 14px;
       line-height: 1.6;
-      margin-top: 12px;
-      margin-bottom: 16px;
     }
 
-    .hint-box p {
-      margin: 8px 0;
+    .question-title {
+      margin-top: 0;
+      margin-bottom: 8px;
+      font-size: 18px;
+      color: #374151;
     }
 
     .sorani {
       direction: rtl;
       text-align: right;
+      font-size: 20px;
+      line-height: 1.8;
+    }
+
+    .kurmanji {
       font-size: 18px;
+      line-height: 1.6;
+    }
+
+    .translation-buttons {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+
+    .translation-button {
+      background: #eef2ff;
+      color: #1f2937;
+      padding: 10px 14px;
+      border-radius: 999px;
+      font-size: 15px;
+    }
+
+    .translation-button:hover {
+      background: #dbeafe;
+    }
+
+    .translation-panel {
+      display: none;
+      background: #fff7ed;
+      border: 1px solid #fed7aa;
+      padding: 14px;
+      border-radius: 10px;
+      margin-bottom: 16px;
+      line-height: 1.6;
+    }
+
+    .translation-panel p {
+      margin: 8px 0;
     }
 
     .answers {
@@ -155,28 +186,40 @@
 <body>
   <header>
     <h1>Kurdish Cities Quiz</h1>
-    <p>Discover Kurdstan</p>
+    <p>Bajarên Kurdî • شارە کوردییەکان</p>
   </header>
 
   <main>
     <section class="quiz-card">
-      <div class="top-row">
-        <div id="progress">Question 1 von 20</div>
-        <div id="score">Punkte: 0</div>
+      <div class="status-row">
+        <div id="progress">Question 1 of 20</div>
+        <div id="score">Score: 0</div>
       </div>
 
-      <div class="question-block">
-        <h2>Welche Stadt ist gemeint?</h2>
-        <p>English: Which city is meant?</p>
-        <p class="sorani">ئەم شارە کامەیە؟</p>
-        <p>Kurmancî: Ev kîjan bajar e?</p>
-      </div>
+      <div class="question-box">
+        <p class="question-title">Question</p>
+        <p class="sorani">ئەم شارە کامە؟</p>
+        <p class="kurmanji">Ev kîjan bajar e?</p>
 
-      <div class="hint-box">
-        <p><strong>Deutsch:</strong> <span id="hintDe"></span></p>
-        <p><strong>English:</strong> <span id="hintEn"></span></p>
+        <hr />
+
         <p class="sorani"><strong>سۆرانی:</strong> <span id="hintSorani"></span></p>
-        <p><strong>Kurmancî:</strong> <span id="hintKurmanji"></span></p>
+        <p class="kurmanji"><strong>Kurmancî:</strong> <span id="hintKurmanji"></span></p>
+      </div>
+
+      <div class="translation-buttons">
+        <button class="translation-button" onclick="toggleTranslation('de')">🇩🇪 Deutsch</button>
+        <button class="translation-button" onclick="toggleTranslation('en')">🇬🇧 English</button>
+      </div>
+
+      <div id="deTranslation" class="translation-panel">
+        <p><strong>Frage:</strong> Welche Stadt ist gemeint?</p>
+        <p><strong>Hinweis:</strong> <span id="hintDe"></span></p>
+      </div>
+
+      <div id="enTranslation" class="translation-panel">
+        <p><strong>Question:</strong> Which city is meant?</p>
+        <p><strong>Hint:</strong> <span id="hintEn"></span></p>
       </div>
 
       <div class="answers" id="answers"></div>
@@ -184,11 +227,11 @@
       <div class="feedback" id="feedback"></div>
 
       <button class="primary" id="nextButton" onclick="nextQuestion()" style="display: none;">
-        Weiter / Next
+        Next
       </button>
 
       <button class="primary" id="restartButton" onclick="restartQuiz()" style="display: none;">
-        Quiz neu starten / Restart quiz
+        Restart quiz
       </button>
     </section>
 
@@ -198,270 +241,270 @@
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
   <script>
-    const baseCities = [
+    const cityData = [
       {
-        name: "Hewlêr / Erbil",
+        id: "erbil",
         nameSorani: "هەولێر",
         nameKurmanji: "Hewlêr",
         country: "Iraq",
         region: "Başûr / باشوور",
         lat: 36.1911,
         lng: 44.0092,
-        hintDe: "Diese Stadt ist bekannt für ihre alte Zitadelle.",
-        hintEn: "This city is known for its old citadel.",
         hintSorani: "ئەم شارە بە قەڵای کۆنی خۆی ناسراوە.",
-        hintKurmanji: "Ev bajar bi qeleya xwe ya kevn tê naskirin."
+        hintKurmanji: "Ev bajar bi qeleya xwe ya kevn tê naskirin.",
+        hintDe: "Diese Stadt ist bekannt für ihre alte Zitadelle.",
+        hintEn: "This city is known for its old citadel."
       },
       {
-        name: "Silêmanî / Sulaimani",
+        id: "sulaimani",
         nameSorani: "سلێمانی",
         nameKurmanji: "Silêmanî",
         country: "Iraq",
         region: "Başûr / باشوور",
         lat: 35.5570,
         lng: 45.4350,
-        hintDe: "Diese Stadt gilt als ein wichtiges kulturelles Zentrum.",
-        hintEn: "This city is considered an important cultural center.",
         hintSorani: "ئەم شارە وەک ناوەندێکی گرنگی کولتووری ناسراوە.",
-        hintKurmanji: "Ev bajar wek navendeke girîng a çandî tê naskirin."
+        hintKurmanji: "Ev bajar wek navendeke girîng a çandî tê naskirin.",
+        hintDe: "Diese Stadt gilt als ein wichtiges kulturelles Zentrum.",
+        hintEn: "This city is considered an important cultural center."
       },
       {
-        name: "Dihok / Duhok",
+        id: "duhok",
         nameSorani: "دهۆک",
         nameKurmanji: "Dihok",
         country: "Iraq",
         region: "Başûr / باشوور",
         lat: 36.8660,
         lng: 42.9890,
-        hintDe: "Diese Stadt liegt nahe Bergen und ist für ihre schöne Umgebung bekannt.",
-        hintEn: "This city is close to mountains and known for its beautiful surroundings.",
         hintSorani: "ئەم شارە نزیکی چیاکانە و بە دەوروبەری جوانی ناسراوە.",
-        hintKurmanji: "Ev bajar nêzî çiyayan e û bi derdora xwe ya xweşik tê naskirin."
+        hintKurmanji: "Ev bajar nêzî çiyayan e û bi derdora xwe ya xweşik tê naskirin.",
+        hintDe: "Diese Stadt liegt nahe Bergen und ist für ihre schöne Umgebung bekannt.",
+        hintEn: "This city is close to mountains and known for its beautiful surroundings."
       },
       {
-        name: "Kerkûk / Kirkuk",
+        id: "kirkuk",
         nameSorani: "کەرکووک",
         nameKurmanji: "Kerkûk",
         country: "Iraq",
         region: "Başûr / باشوور",
         lat: 35.4681,
         lng: 44.3922,
-        hintDe: "Diese historische Stadt ist auch für Öl und ihre alte Zitadelle bekannt.",
-        hintEn: "This historic city is also known for oil and its old citadel.",
         hintSorani: "ئەم شارە مێژووییە بە نەوت و قەڵای کۆنی خۆی ناسراوە.",
-        hintKurmanji: "Ev bajara dîrokî bi neftê û qeleya xwe ya kevn jî tê naskirin."
+        hintKurmanji: "Ev bajara dîrokî bi neftê û qeleya xwe ya kevn jî tê naskirin.",
+        hintDe: "Diese historische Stadt ist auch für Öl und ihre alte Zitadelle bekannt.",
+        hintEn: "This historic city is also known for oil and its old citadel."
       },
       {
-        name: "Helebce / Halabja",
+        id: "halabja",
         nameSorani: "هەڵەبجە",
         nameKurmanji: "Helebce",
         country: "Iraq",
         region: "Başûr / باشوور",
         lat: 35.1778,
         lng: 45.9861,
-        hintDe: "Diese Stadt liegt nahe der iranischen Grenze und ist ein wichtiger Erinnerungsort.",
-        hintEn: "This city is near the Iranian border and is an important place of remembrance.",
         hintSorani: "ئەم شارە نزیکی سنووری ئێرانە و شوێنێکی گرنگی یادەوەرییە.",
-        hintKurmanji: "Ev bajar nêzî sînorê Îranê ye û cihêke girîng a bîranînê ye."
+        hintKurmanji: "Ev bajar nêzî sînorê Îranê ye û cihêke girîng a bîranînê ye.",
+        hintDe: "Diese Stadt liegt nahe der iranischen Grenze und ist ein wichtiger Erinnerungsort.",
+        hintEn: "This city is near the Iranian border and is an important place of remembrance."
       },
       {
-        name: "Zaxo / Zakho",
+        id: "zakho",
         nameSorani: "زاخۆ",
         nameKurmanji: "Zaxo",
         country: "Iraq",
         region: "Başûr / باشوور",
         lat: 37.1445,
         lng: 42.6872,
-        hintDe: "Diese Stadt liegt nahe der türkischen Grenze und ist für die Delal-Brücke bekannt.",
-        hintEn: "This city is near the Turkish border and known for the Delal Bridge.",
         hintSorani: "ئەم شارە نزیکی سنووری تورکیاە و بە پردی دەلال ناسراوە.",
-        hintKurmanji: "Ev bajar nêzî sînorê Tirkiyeyê ye û bi Pira Delal tê naskirin."
+        hintKurmanji: "Ev bajar nêzî sînorê Tirkiyeyê ye û bi Pira Delal tê naskirin.",
+        hintDe: "Diese Stadt liegt nahe der türkischen Grenze und ist für die Delal-Brücke bekannt.",
+        hintEn: "This city is near the Turkish border and known for the Delal Bridge."
       },
       {
-        name: "Koyê / Koya",
+        id: "koya",
         nameSorani: "کۆیە",
         nameKurmanji: "Koyê",
         country: "Iraq",
         region: "Başûr / باشوور",
         lat: 36.0847,
         lng: 44.6278,
-        hintDe: "Diese Stadt liegt zwischen Hewlêr und Silêmanî.",
-        hintEn: "This city is located between Erbil and Sulaimani.",
         hintSorani: "ئەم شارە لە نێوان هەولێر و سلێمانی دایە.",
-        hintKurmanji: "Ev bajar di navbera Hewlêr û Silêmaniyê de ye."
+        hintKurmanji: "Ev bajar di navbera Hewlêr û Silêmaniyê de ye.",
+        hintDe: "Diese Stadt liegt zwischen Hewlêr und Silêmanî.",
+        hintEn: "This city is located between Erbil and Sulaimani."
       },
       {
-        name: "Ranya / Rania",
+        id: "rania",
         nameSorani: "ڕانیە",
         nameKurmanji: "Ranya",
         country: "Iraq",
         region: "Başûr / باشوور",
         lat: 36.2550,
         lng: 44.8830,
-        hintDe: "Diese Stadt liegt in der Nähe des Dokan-Sees und von Bergen.",
-        hintEn: "This city is near Lake Dokan and mountains.",
         hintSorani: "ئەم شارە نزیکی دەریاچەی دوکان و چیاکانە.",
-        hintKurmanji: "Ev bajar nêzî Gola Dokanê û çiyayan e."
+        hintKurmanji: "Ev bajar nêzî Gola Dokanê û çiyayan e.",
+        hintDe: "Diese Stadt liegt in der Nähe des Dokan-Sees und von Bergen.",
+        hintEn: "This city is near Lake Dokan and mountains."
       },
       {
-        name: "Akrê / Akre",
+        id: "akre",
         nameSorani: "ئاکرێ",
         nameKurmanji: "Akrê",
         country: "Iraq",
         region: "Başûr / باشوور",
         lat: 36.7470,
         lng: 43.8940,
-        hintDe: "Diese Bergstadt ist besonders für Newroz-Feiern bekannt.",
-        hintEn: "This mountain city is especially known for Newroz celebrations.",
         hintSorani: "ئەم شارە شاخاویە بە تایبەتی بە ئاهەنگەکانی نەورۆز ناسراوە.",
-        hintKurmanji: "Ev bajara çiyayî bi taybetî bi şahiyên Newrozê tê naskirin."
+        hintKurmanji: "Ev bajara çiyayî bi taybetî bi şahiyên Newrozê tê naskirin.",
+        hintDe: "Diese Bergstadt ist besonders für Newroz-Feiern bekannt.",
+        hintEn: "This mountain city is especially known for Newroz celebrations."
       },
       {
-        name: "Amed / Diyarbakır",
+        id: "amed",
         nameSorani: "ئامەد",
         nameKurmanji: "Amed",
         country: "Turkey",
         region: "Bakur / باکوور",
         lat: 37.9144,
         lng: 40.2306,
-        hintDe: "Diese Stadt ist bekannt für ihre alten Stadtmauern am Tigris.",
-        hintEn: "This city is known for its old city walls near the Tigris.",
         hintSorani: "ئەم شارە بە دیوارە کۆنەکانی نزیک ڕووباری دیجلە ناسراوە.",
-        hintKurmanji: "Ev bajar bi dîwarên xwe yên kevn li nêzî Dîcleyê tê naskirin."
+        hintKurmanji: "Ev bajar bi dîwarên xwe yên kevn li nêzî Dîcleyê tê naskirin.",
+        hintDe: "Diese Stadt ist bekannt für ihre alten Stadtmauern am Tigris.",
+        hintEn: "This city is known for its old city walls near the Tigris."
       },
       {
-        name: "Wan / Van",
+        id: "van",
         nameSorani: "وان",
         nameKurmanji: "Wan",
         country: "Turkey",
         region: "Bakur / باکوور",
         lat: 38.5012,
         lng: 43.3730,
-        hintDe: "Diese Stadt liegt am großen Van-See.",
-        hintEn: "This city is located by the large Lake Van.",
         hintSorani: "ئەم شارە لە کنار دەریاچەی گەورەی وانە.",
-        hintKurmanji: "Ev bajar li kêleka Gola Wanê ye."
+        hintKurmanji: "Ev bajar li kêleka Gola Wanê ye.",
+        hintDe: "Diese Stadt liegt am großen Van-See.",
+        hintEn: "This city is located by the large Lake Van."
       },
       {
-        name: "Mêrdîn / Mardin",
+        id: "mardin",
         nameSorani: "مێردین",
         nameKurmanji: "Mêrdîn",
         country: "Turkey",
         region: "Bakur / باکوور",
         lat: 37.3122,
         lng: 40.7351,
-        hintDe: "Diese Stadt ist für alte Steinhäuser an einem Hang bekannt.",
-        hintEn: "This city is known for old stone houses on a hillside.",
         hintSorani: "ئەم شارە بە خانووە بەردینە کۆنەکانی لەسەر لێژیەک ناسراوە.",
-        hintKurmanji: "Ev bajar bi xaniyên kevirî yên kevn li ser alîyekî çiyê tê naskirin."
+        hintKurmanji: "Ev bajar bi xaniyên kevirî yên kevn li ser alîyekî çiyê tê naskirin.",
+        hintDe: "Diese Stadt ist für alte Steinhäuser an einem Hang bekannt.",
+        hintEn: "This city is known for old stone houses on a hillside."
       },
       {
-        name: "Colemêrg / Hakkari",
+        id: "hakkari",
         nameSorani: "جۆلەمێرگ",
         nameKurmanji: "Colemêrg",
         country: "Turkey",
         region: "Bakur / باکوور",
         lat: 37.5744,
         lng: 43.7408,
-        hintDe: "Diese Stadt liegt in einer sehr bergigen Region.",
-        hintEn: "This city is located in a very mountainous region.",
         hintSorani: "ئەم شارە لە ناوچەیەکی زۆر شاخاوی دایە.",
-        hintKurmanji: "Ev bajar li herêmeke pir çiyayî ye."
+        hintKurmanji: "Ev bajar li herêmeke pir çiyayî ye.",
+        hintDe: "Diese Stadt liegt in einer sehr bergigen Region.",
+        hintEn: "This city is located in a very mountainous region."
       },
       {
-        name: "Batman",
+        id: "batman",
         nameSorani: "باتمان",
         nameKurmanji: "Êlih / Batman",
         country: "Turkey",
         region: "Bakur / باکوور",
         lat: 37.8812,
         lng: 41.1351,
-        hintDe: "Diese Stadt liegt im Südosten der Türkei und nahe dem Tigris-Gebiet.",
-        hintEn: "This city is in southeastern Turkey and near the Tigris region.",
         hintSorani: "ئەم شارە لە باشووری ڕۆژهەڵاتی تورکیاە و نزیکی ناوچەی دیجلەیە.",
-        hintKurmanji: "Ev bajar li başûrê rojhilatê Tirkiyeyê ye û nêzî herêma Dîcleyê ye."
+        hintKurmanji: "Ev bajar li başûrê rojhilatê Tirkiyeyê ye û nêzî herêma Dîcleyê ye.",
+        hintDe: "Diese Stadt liegt im Südosten der Türkei und nahe dem Tigris-Gebiet.",
+        hintEn: "This city is in southeastern Turkey and near the Tigris region."
       },
       {
-        name: "Qamişlo / Qamishli",
+        id: "qamishli",
         nameSorani: "قامیشلۆ",
         nameKurmanji: "Qamişlo",
         country: "Syria",
         region: "Rojava / ڕۆژاوا",
         lat: 37.0531,
         lng: 41.2293,
-        hintDe: "Diese Stadt liegt im Nordosten Syriens nahe der türkischen Grenze.",
-        hintEn: "This city is in northeastern Syria near the Turkish border.",
         hintSorani: "ئەم شارە لە باکووری ڕۆژهەڵاتی سووریاە و نزیکی سنووری تورکیاە.",
-        hintKurmanji: "Ev bajar li bakurê rojhilatê Sûriyeyê ye û nêzî sînorê Tirkiyeyê ye."
+        hintKurmanji: "Ev bajar li bakurê rojhilatê Sûriyeyê ye û nêzî sînorê Tirkiyeyê ye.",
+        hintDe: "Diese Stadt liegt im Nordosten Syriens nahe der türkischen Grenze.",
+        hintEn: "This city is in northeastern Syria near the Turkish border."
       },
       {
-        name: "Kobanê / Ayn al-Arab",
+        id: "kobane",
         nameSorani: "کۆبانێ",
         nameKurmanji: "Kobanê",
         country: "Syria",
         region: "Rojava / ڕۆژاوا",
         lat: 36.8908,
         lng: 38.3535,
-        hintDe: "Diese Stadt liegt in Nordsyrien nahe der türkischen Grenze.",
-        hintEn: "This city is in northern Syria near the Turkish border.",
         hintSorani: "ئەم شارە لە باکووری سووریاە و نزیکی سنووری تورکیاە.",
-        hintKurmanji: "Ev bajar li bakurê Sûriyeyê ye û nêzî sînorê Tirkiyeyê ye."
+        hintKurmanji: "Ev bajar li bakurê Sûriyeyê ye û nêzî sînorê Tirkiyeyê ye.",
+        hintDe: "Diese Stadt liegt in Nordsyrien nahe der türkischen Grenze.",
+        hintEn: "This city is in northern Syria near the Turkish border."
       },
       {
-        name: "Amûdê / Amuda",
+        id: "amuda",
         nameSorani: "عامودێ",
         nameKurmanji: "Amûdê",
         country: "Syria",
         region: "Rojava / ڕۆژاوا",
         lat: 37.1041,
         lng: 40.9300,
-        hintDe: "Diese kleinere Stadt liegt in der Jazira-Region.",
-        hintEn: "This smaller city is located in the Jazira region.",
         hintSorani: "ئەم شارۆچکەیە لە ناوچەی جەزیرە دایە.",
-        hintKurmanji: "Ev bajara biçûk li herêma Cizîrê ye."
+        hintKurmanji: "Ev bajara biçûk li herêma Cizîrê ye.",
+        hintDe: "Diese kleinere Stadt liegt in der Jazira-Region.",
+        hintEn: "This smaller city is located in the Jazira region."
       },
       {
-        name: "Mehabad / Mahabad",
+        id: "mahabad",
         nameSorani: "مەهاباد",
         nameKurmanji: "Mehabad",
         country: "Iran",
         region: "Rojhilat / ڕۆژهەڵات",
         lat: 36.7631,
         lng: 45.7222,
-        hintDe: "Diese Stadt im Westen Irans hat eine wichtige Bedeutung in der kurdischen Geschichte.",
-        hintEn: "This city in western Iran has an important place in Kurdish history.",
         hintSorani: "ئەم شارە لە ڕۆژئاوای ئێرانە و لە مێژووی کوردیدا گرنگە.",
-        hintKurmanji: "Ev bajar li rojavayê Îranê ye û di dîroka Kurdî de girîng e."
+        hintKurmanji: "Ev bajar li rojavayê Îranê ye û di dîroka Kurdî de girîng e.",
+        hintDe: "Diese Stadt im Westen Irans hat eine wichtige Bedeutung in der kurdischen Geschichte.",
+        hintEn: "This city in western Iran has an important place in Kurdish history."
       },
       {
-        name: "Sine / Sanandaj",
+        id: "sanandaj",
         nameSorani: "سنە",
         nameKurmanji: "Sine",
         country: "Iran",
         region: "Rojhilat / ڕۆژهەڵات",
         lat: 35.3140,
         lng: 46.9923,
-        hintDe: "Diese Stadt ist die Hauptstadt der iranischen Provinz Kurdistan.",
-        hintEn: "This city is the capital of Iran's Kurdistan Province.",
         hintSorani: "ئەم شارە پایتەختی پارێزگای کوردستانی ئێرانە.",
-        hintKurmanji: "Ev bajar paytexta parêzgeha Kurdistanê ya Îranê ye."
+        hintKurmanji: "Ev bajar paytexta parêzgeha Kurdistanê ya Îranê ye.",
+        hintDe: "Diese Stadt ist die Hauptstadt der iranischen Provinz Kurdistan.",
+        hintEn: "This city is the capital of Iran's Kurdistan Province."
       },
       {
-        name: "Kirmaşan / Kermanshah",
+        id: "kermanshah",
         nameSorani: "کرماشان",
         nameKurmanji: "Kirmaşan",
         country: "Iran",
         region: "Rojhilat / ڕۆژهەڵات",
         lat: 34.3142,
         lng: 47.0650,
-        hintDe: "Diese Stadt ist bekannt für historische Orte wie Taq-e Bostan.",
-        hintEn: "This city is known for historic sites such as Taq-e Bostan.",
         hintSorani: "ئەم شارە بە شوێنە مێژووییەکانی وەک تاقی بستان ناسراوە.",
-        hintKurmanji: "Ev bajar bi cihên dîrokî wek Taq-e Bostan tê naskirin."
+        hintKurmanji: "Ev bajar bi cihên dîrokî wek Taq-e Bostan tê naskirin.",
+        hintDe: "Diese Stadt ist bekannt für historische Orte wie Taq-e Bostan.",
+        hintEn: "This city is known for historic sites such as Taq-e Bostan."
       }
     ];
 
-    let cities = shuffleArray([...baseCities]);
+    let quizCities = shuffleArray([...cityData]);
     let currentQuestionIndex = 0;
     let score = 0;
     let marker = null;
@@ -474,19 +517,21 @@
     }).addTo(map);
 
     function showQuestion() {
-      const city = cities[currentQuestionIndex];
+      const city = quizCities[currentQuestionIndex];
 
       document.getElementById("progress").textContent =
-        `Frage ${currentQuestionIndex + 1} von ${cities.length}`;
+        `Question ${currentQuestionIndex + 1} of ${quizCities.length}`;
 
       document.getElementById("score").textContent =
-        `Punkte: ${score}`;
+        `Score: ${score}`;
 
-      document.getElementById("hintDe").textContent = city.hintDe;
-      document.getElementById("hintEn").textContent = city.hintEn;
       document.getElementById("hintSorani").textContent = city.hintSorani;
       document.getElementById("hintKurmanji").textContent = city.hintKurmanji;
+      document.getElementById("hintDe").textContent = city.hintDe;
+      document.getElementById("hintEn").textContent = city.hintEn;
 
+      document.getElementById("deTranslation").style.display = "none";
+      document.getElementById("enTranslation").style.display = "none";
       document.getElementById("feedback").textContent = "";
       document.getElementById("nextButton").style.display = "none";
 
@@ -497,49 +542,68 @@
 
       choices.forEach(choice => {
         const button = document.createElement("button");
-        button.textContent = choice;
-        button.onclick = () => checkAnswer(choice, button);
+        button.textContent = getCityLabel(choice);
+        button.dataset.cityId = choice.id;
+        button.onclick = () => checkAnswer(choice.id, button);
         answersDiv.appendChild(button);
       });
     }
 
+    function toggleTranslation(language) {
+      const dePanel = document.getElementById("deTranslation");
+      const enPanel = document.getElementById("enTranslation");
+
+      if (language === "de") {
+        enPanel.style.display = "none";
+        dePanel.style.display = dePanel.style.display === "block" ? "none" : "block";
+      }
+
+      if (language === "en") {
+        dePanel.style.display = "none";
+        enPanel.style.display = enPanel.style.display === "block" ? "none" : "block";
+      }
+    }
+
     function buildChoices(correctCity) {
-      const wrongChoices = cities
-        .filter(city => city.name !== correctCity.name)
-        .map(city => city.name);
+      const wrongChoices = quizCities
+        .filter(city => city.id !== correctCity.id);
 
       const selectedWrongChoices = shuffleArray([...wrongChoices]).slice(0, 3);
 
-      return shuffleArray([correctCity.name, ...selectedWrongChoices]);
+      return shuffleArray([correctCity, ...selectedWrongChoices]);
     }
 
-    function checkAnswer(selectedAnswer, clickedButton) {
-      const city = cities[currentQuestionIndex];
+    function getCityLabel(city) {
+      return `${city.nameKurmanji} / ${city.nameSorani}`;
+    }
+
+    function checkAnswer(selectedCityId, clickedButton) {
+      const city = quizCities[currentQuestionIndex];
       const allButtons = document.querySelectorAll(".answers button");
 
       allButtons.forEach(button => {
         button.disabled = true;
 
-        if (button.textContent === city.name) {
+        if (button.dataset.cityId === city.id) {
           button.classList.add("correct");
         }
       });
 
-      if (selectedAnswer === city.name) {
+      if (selectedCityId === city.id) {
         score++;
         clickedButton.classList.add("correct");
         document.getElementById("feedback").innerHTML =
-          `Richtig! Correct!<br>${city.name} — ${city.nameSorani} — ${city.nameKurmanji}`;
+          `Correct!<br>${getCityLabel(city)}`;
       } else {
         clickedButton.classList.add("wrong");
         document.getElementById("feedback").innerHTML =
-          `Leider falsch. Wrong answer.<br>Richtig wäre: ${city.name} — ${city.nameSorani} — ${city.nameKurmanji}`;
+          `Wrong answer.<br>Correct answer: ${getCityLabel(city)}`;
       }
 
-      document.getElementById("score").textContent = `Punkte: ${score}`;
+      document.getElementById("score").textContent = `Score: ${score}`;
       showCityOnMap(city);
 
-      if (currentQuestionIndex < cities.length - 1) {
+      if (currentQuestionIndex < quizCities.length - 1) {
         document.getElementById("nextButton").style.display = "inline-block";
       } else {
         showFinalResult();
@@ -556,9 +620,7 @@
       marker = L.marker([city.lat, city.lng])
         .addTo(map)
         .bindPopup(`
-          <strong>${city.name}</strong><br>
-          ${city.nameSorani}<br>
-          ${city.nameKurmanji}<br>
+          <strong>${getCityLabel(city)}</strong><br>
           ${city.country}<br>
           ${city.region}
         `)
@@ -571,17 +633,15 @@
     }
 
     function showFinalResult() {
-      const feedback = document.getElementById("feedback");
-
-      feedback.innerHTML =
-        `Quiz beendet!<br>You scored ${score} out of ${cities.length} points.`;
+      document.getElementById("feedback").innerHTML =
+        `Quiz finished!<br>Your score: ${score} out of ${quizCities.length}.`;
 
       document.getElementById("nextButton").style.display = "none";
       document.getElementById("restartButton").style.display = "inline-block";
     }
 
     function restartQuiz() {
-      cities = shuffleArray([...baseCities]);
+      quizCities = shuffleArray([...cityData]);
       currentQuestionIndex = 0;
       score = 0;
 
