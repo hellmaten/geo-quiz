@@ -61,7 +61,7 @@
 
     .question-box {
       background: #f9fafb;
-      padding: 12px;
+      padding: 10px 12px;
       border-radius: 12px;
       margin-bottom: 12px;
     }
@@ -73,10 +73,9 @@
     }
 
     .dialect-col {
-      background: white;
-      border: 1px solid #e5e7eb;
-      border-radius: 10px;
-      padding: 10px;
+      background: transparent;
+      border: none;
+      padding: 4px 2px;
       min-width: 0;
     }
 
@@ -232,7 +231,7 @@
       }
 
       .dialect-col {
-        padding: 8px;
+        padding: 3px 1px;
       }
 
       .dialect-label {
@@ -295,13 +294,13 @@
         <div class="dialect-row">
           <div class="dialect-col">
             <div class="dialect-label">Kurmancî</div>
-            <div class="question-text">Ev kîjan bajar e?</div>
+            <div class="question-text" id="questionKurmanji">Ev kîjan bajar e?</div>
             <div class="hint-text" id="hintKurmanji"></div>
           </div>
 
           <div class="dialect-col sorani-col">
             <div class="dialect-label">سۆرانی</div>
-            <div class="question-text sorani">ئەم شارە کامە؟</div>
+            <div class="question-text sorani" id="questionSorani">ئەم شارە کامە؟</div>
             <div class="hint-text sorani" id="hintSorani"></div>
           </div>
         </div>
@@ -313,12 +312,12 @@
       </div>
 
       <div id="deTranslation" class="translation-panel">
-        <p><strong>Frage:</strong> Welche Stadt ist gemeint?</p>
+        <p><strong>Frage:</strong> <span id="questionDe">Welche Stadt ist gemeint?</span></p>
         <p><strong>Hinweis:</strong> <span id="hintDe"></span></p>
       </div>
 
       <div id="enTranslation" class="translation-panel">
-        <p><strong>Question:</strong> Which city is meant?</p>
+        <p><strong>Question:</strong> <span id="questionEn">Which city is meant?</span></p>
         <p><strong>Hint:</strong> <span id="hintEn"></span></p>
       </div>
 
@@ -341,6 +340,33 @@
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
   <script>
+    const questionTexts = [
+      {
+        kurmanji: "Ev kîjan bajar e?",
+        sorani: "ئەم شارە کامە؟",
+        de: "Welche Stadt ist gemeint?",
+        en: "Which city is meant?"
+      },
+      {
+        kurmanji: "Navê vî bajarî çi ye?",
+        sorani: "ناوی ئەم شارە چییە؟",
+        de: "Wie heißt diese Stadt?",
+        en: "What is the name of this city?"
+      },
+      {
+        kurmanji: "Tu dizanî ev bajar kîjan e?",
+        sorani: "دەزانیت ئەم شارە کامە؟",
+        de: "Weißt du, welche Stadt das ist?",
+        en: "Do you know which city this is?"
+      },
+      {
+        kurmanji: "Li gorî vê agahiyê, ev kîjan bajar e?",
+        sorani: "بەپێی ئەم زانیارییە، ئەم شارە کامە؟",
+        de: "Welche Stadt passt zu diesem Hinweis?",
+        en: "Which city matches this hint?"
+      }
+    ];
+
     const cityData = [
       {
         id: "erbil",
@@ -608,6 +634,7 @@
     let currentQuestionIndex = 0;
     let score = 0;
     let marker = null;
+    let lastQuestionTextIndex = -1;
 
     const map = L.map("map").setView([37.0, 42.5], 5);
 
@@ -618,12 +645,18 @@
 
     function showQuestion() {
       const city = quizCities[currentQuestionIndex];
+      const questionText = getRandomQuestionText();
 
       document.getElementById("progress").textContent =
         `Question ${currentQuestionIndex + 1} of ${quizCities.length}`;
 
       document.getElementById("score").textContent =
         `Score: ${score}`;
+
+      document.getElementById("questionKurmanji").textContent = questionText.kurmanji;
+      document.getElementById("questionSorani").textContent = questionText.sorani;
+      document.getElementById("questionDe").textContent = questionText.de;
+      document.getElementById("questionEn").textContent = questionText.en;
 
       document.getElementById("hintSorani").textContent = city.hintSorani;
       document.getElementById("hintKurmanji").textContent = city.hintKurmanji;
@@ -647,6 +680,19 @@
         button.onclick = () => checkAnswer(choice.id, button);
         answersDiv.appendChild(button);
       });
+    }
+
+    function getRandomQuestionText() {
+      let randomIndex = Math.floor(Math.random() * questionTexts.length);
+
+      if (questionTexts.length > 1) {
+        while (randomIndex === lastQuestionTextIndex) {
+          randomIndex = Math.floor(Math.random() * questionTexts.length);
+        }
+      }
+
+      lastQuestionTextIndex = randomIndex;
+      return questionTexts[randomIndex];
     }
 
     function toggleTranslation(language) {
@@ -742,6 +788,7 @@
       quizCities = shuffleArray([...cityData]);
       currentQuestionIndex = 0;
       score = 0;
+      lastQuestionTextIndex = -1;
 
       document.getElementById("restartButton").style.display = "none";
 
