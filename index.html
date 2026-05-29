@@ -22,26 +22,32 @@
     header {
       background: #1f2937;
       color: white;
-      padding: 20px;
+      padding: 16px;
       text-align: center;
     }
 
     header h1 {
-      margin-bottom: 8px;
+      margin: 0 0 6px 0;
+      font-size: 28px;
+    }
+
+    header p {
+      margin: 0;
+      font-size: 16px;
     }
 
     main {
       max-width: 950px;
-      margin: 20px auto;
-      padding: 16px;
+      margin: 18px auto;
+      padding: 14px;
     }
 
     .quiz-card {
       background: white;
-      padding: 20px;
+      padding: 18px;
       border-radius: 14px;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-      margin-bottom: 20px;
+      margin-bottom: 18px;
     }
 
     .status-row {
@@ -49,35 +55,58 @@
       justify-content: space-between;
       gap: 12px;
       flex-wrap: wrap;
-      margin-bottom: 18px;
+      margin-bottom: 12px;
       font-weight: bold;
     }
 
     .question-box {
       background: #f9fafb;
-      padding: 16px;
+      padding: 12px;
       border-radius: 12px;
-      margin-bottom: 14px;
-      line-height: 1.6;
+      margin-bottom: 12px;
     }
 
-    .question-title {
-      margin-top: 0;
-      margin-bottom: 8px;
-      font-size: 18px;
+    .dialect-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .dialect-col {
+      background: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 10px;
+      padding: 10px;
+      min-width: 0;
+    }
+
+    .sorani-col {
+      text-align: right;
+    }
+
+    .dialect-label {
+      font-size: 13px;
+      font-weight: bold;
+      color: #6b7280;
+      margin-bottom: 4px;
+    }
+
+    .question-text {
+      font-size: 17px;
+      font-weight: bold;
+      margin-bottom: 6px;
+      line-height: 1.4;
+    }
+
+    .hint-text {
+      font-size: 15px;
+      line-height: 1.45;
       color: #374151;
     }
 
     .sorani {
       direction: rtl;
       text-align: right;
-      font-size: 20px;
-      line-height: 1.8;
-    }
-
-    .kurmanji {
-      font-size: 18px;
-      line-height: 1.6;
     }
 
     .translation-buttons {
@@ -90,7 +119,7 @@
     .translation-button {
       background: #eef2ff;
       color: #1f2937;
-      padding: 10px 14px;
+      padding: 9px 13px;
       border-radius: 999px;
       font-size: 15px;
     }
@@ -103,21 +132,21 @@
       display: none;
       background: #fff7ed;
       border: 1px solid #fed7aa;
-      padding: 14px;
+      padding: 12px;
       border-radius: 10px;
-      margin-bottom: 16px;
-      line-height: 1.6;
+      margin-bottom: 14px;
+      line-height: 1.5;
     }
 
     .translation-panel p {
-      margin: 8px 0;
+      margin: 7px 0;
     }
 
     .answers {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 12px;
-      margin-top: 16px;
+      margin-top: 14px;
     }
 
     button {
@@ -150,7 +179,7 @@
     .primary {
       background: #2563eb;
       color: white;
-      margin-top: 16px;
+      margin-top: 14px;
     }
 
     .primary:hover {
@@ -158,7 +187,7 @@
     }
 
     .feedback {
-      margin-top: 16px;
+      margin-top: 14px;
       font-weight: bold;
       min-height: 24px;
       line-height: 1.5;
@@ -172,12 +201,78 @@
     }
 
     @media (max-width: 650px) {
+      main {
+        padding: 10px;
+        margin: 10px auto;
+      }
+
+      header {
+        padding: 14px 10px;
+      }
+
+      header h1 {
+        font-size: 23px;
+      }
+
+      header p {
+        font-size: 14px;
+      }
+
+      .quiz-card {
+        padding: 14px;
+      }
+
+      .status-row {
+        font-size: 14px;
+        margin-bottom: 10px;
+      }
+
+      .dialect-row {
+        gap: 8px;
+      }
+
+      .dialect-col {
+        padding: 8px;
+      }
+
+      .dialect-label {
+        font-size: 12px;
+      }
+
+      .question-text {
+        font-size: 15px;
+      }
+
+      .hint-text {
+        font-size: 13.5px;
+      }
+
+      .translation-button {
+        padding: 8px 11px;
+        font-size: 14px;
+      }
+
       .answers {
         grid-template-columns: 1fr;
       }
 
+      button {
+        padding: 13px 14px;
+        font-size: 15px;
+      }
+
       #map {
         height: 350px;
+      }
+    }
+
+    @media (max-width: 390px) {
+      .question-text {
+        font-size: 14px;
+      }
+
+      .hint-text {
+        font-size: 12.8px;
       }
     }
   </style>
@@ -197,14 +292,19 @@
       </div>
 
       <div class="question-box">
-        <p class="question-title">Question</p>
-        <p class="sorani">ئەم شارە کامە؟</p>
-        <p class="kurmanji">Ev kîjan bajar e?</p>
+        <div class="dialect-row">
+          <div class="dialect-col">
+            <div class="dialect-label">Kurmancî</div>
+            <div class="question-text">Ev kîjan bajar e?</div>
+            <div class="hint-text" id="hintKurmanji"></div>
+          </div>
 
-        <hr />
-
-        <p class="sorani"><strong>سۆرانی:</strong> <span id="hintSorani"></span></p>
-        <p class="kurmanji"><strong>Kurmancî:</strong> <span id="hintKurmanji"></span></p>
+          <div class="dialect-col sorani-col">
+            <div class="dialect-label">سۆرانی</div>
+            <div class="question-text sorani">ئەم شارە کامە؟</div>
+            <div class="hint-text sorani" id="hintSorani"></div>
+          </div>
+        </div>
       </div>
 
       <div class="translation-buttons">
@@ -565,9 +665,7 @@
     }
 
     function buildChoices(correctCity) {
-      const wrongChoices = quizCities
-        .filter(city => city.id !== correctCity.id);
-
+      const wrongChoices = quizCities.filter(city => city.id !== correctCity.id);
       const selectedWrongChoices = shuffleArray([...wrongChoices]).slice(0, 3);
 
       return shuffleArray([correctCity, ...selectedWrongChoices]);
