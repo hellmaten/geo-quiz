@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Städte-Quiz</title>
+
+  <!-- Leaflet CSS -->
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+  />
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f4f6f8;
+      color: #222;
+    }
+
+    header {
+      background: #1f2937;
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
+
+    main {
+      max-width: 900px;
+      margin: 20px auto;
+      padding: 16px;
+    }
+
+    .quiz-card {
+      background: white;
+      padding: 20px;
+      border-radius: 14px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      margin-bottom: 20px;
+    }
+
+    .top-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+      font-weight: bold;
+    }
+
+    h2 {
+      margin-top: 0;
+    }
+
+    .hint {
+      font-size: 18px;
+      margin: 16px 0;
+      line-height: 1.5;
+    }
+
+    .answers {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    button {
+      border: none;
+      padding: 14px 16px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 16px;
+      background: #e5e7eb;
+      transition: 0.2s;
+    }
+
+    button:hover {
+      background: #d1d5db;
+    }
+
+    button.correct {
+      background: #bbf7d0;
+    }
+
+    button.wrong {
+      background: #fecaca;
+    }
+
+    button:disabled {
+      cursor: not-allowed;
+      opacity: 0.9;
+    }
+
+    .primary {
+      background: #2563eb;
+      color: white;
+      margin-top: 16px;
+    }
+
+    .primary:hover {
+      background: #1d4ed8;
+    }
+
+    .feedback {
+      margin-top: 16px;
+      font-weight: bold;
+      min-height: 24px;
+    }
+
+    #map {
+      height: 420px;
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.10);
+    }
+
+    @media (max-width: 650px) {
+      .answers {
+        grid-template-columns: 1fr;
+      }
+
+      #map {
+        height: 350px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <h1>Städte-Quiz</h1>
+    <p>Errate die Stadt und entdecke sie auf der Karte.</p>
+  </header>
+
+  <main>
+    <section class="quiz-card">
+      <div class="top-row">
+        <div id="progress">Frage 1 von 10</div>
+        <div id="score">Punkte: 0</div>
+      </div>
+
+      <h2 id="question">Welche Stadt ist gemeint?</h2>
+      <p class="hint" id="hint"></p>
+
+      <div class="answers" id="answers"></div>
+
+      <div class="feedback" id="feedback"></div>
+
+      <button class="primary" id="nextButton" onclick="nextQuestion()" style="display: none;">
+        Weiter
+      </button>
+
+      <button class="primary" id="restartButton" onclick="restartQuiz()" style="display: none;">
+        Quiz neu starten
+      </button>
+    </section>
+
+    <div id="map"></div>
+  </main>
+
+  <!-- Leaflet JavaScript -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <script>
+    const cities = [
+      {
+        name: "Dresden",
+        country: "Deutschland",
+        lat: 51.0504,
+        lng: 13.7373,
+        hint: "Diese Stadt liegt an der Elbe und ist bekannt für die Frauenkirche.",
+        choices: ["Dresden", "Leipzig", "München", "Hamburg"]
+      },
+      {
+        name: "Paris",
+        country: "Frankreich",
+        lat: 48.8566,
+        lng: 2.3522,
+        hint: "Diese Stadt ist bekannt für den Eiffelturm.",
+        choices: ["Paris", "Rom", "Madrid", "Wien"]
+      },
+      {
+        name: "Rom",
+        country: "Italien",
+        lat: 41.9028,
+        lng: 12.4964,
+        hint: "In dieser Stadt befindet sich das Kolosseum.",
+        choices: ["Athen", "Rom", "Barcelona", "Lissabon"]
+      },
+      {
+        name: "London",
+        country: "Vereinigtes Königreich",
+        lat: 51.5072,
+        lng: -0.1276,
+        hint: "Diese Stadt ist bekannt für Big Ben und die Themse.",
+        choices: ["London", "Dublin", "Manchester", "Edinburgh"]
+      },
+      {
+        name: "Berlin",
+        country: "Deutschland",
+        lat: 52.52,
+        lng: 13.405,
+        hint: "Diese Stadt ist die Hauptstadt Deutschlands.",
+        choices: ["Berlin", "Köln", "Frankfurt", "Stuttgart"]
+      },
+      {
+        name: "Barcelona",
+        country: "Spanien",
+        lat: 41.3874,
+        lng: 2.1686,
+        hint: "Diese Stadt ist bekannt für die Sagrada Família.",
+        choices: ["Barcelona", "Sevilla", "Valencia", "Madrid"]
+      },
+      {
+        name: "Wien",
+        country: "Österreich",
+        lat: 48.2082,
+        lng: 16.3738,
+        hint: "Diese Stadt ist die Hauptstadt Österreichs.",
+        choices: ["Wien", "Zürich", "Prag", "Budapest"]
+      },
+      {
+        name: "Amsterdam",
+        country: "Niederlande",
+        lat: 52.3676,
+        lng: 4.9041,
+        hint: "Diese Stadt ist bekannt für ihre Grachten und Fahrräder.",
+        choices: ["Amsterdam", "Brüssel", "Rotterdam", "Kopenhagen"]
+      },
+      {
+        name: "Athen",
+        country: "Griechenland",
+        lat: 37.9838,
+        lng: 23.7275,
+        hint: "Diese Stadt ist bekannt für die Akropolis.",
+        choices: ["Athen", "Istanbul", "Sofia", "Neapel"]
+      },
+      {
+        name: "Prag",
+        country: "Tschechien",
+        lat: 50.0755,
+        lng: 14.4378,
+        hint: "Diese Stadt ist bekannt für die Karlsbrücke.",
+        choices: ["Prag", "Bratislava", "Warschau", "Krakau"]
+      }
+    ];
+
+    let currentQuestionIndex = 0;
+    let score = 0;
+    let marker = null;
+
+    const map = L.map("map").setView([50.5, 10.5], 4);
+
+    L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      maxZoom: 19,
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+    }).addTo(map);
+
+    function showQuestion() {
+      const city = cities[currentQuestionIndex];
+
+      document.getElementById("progress").textContent =
+        `Frage ${currentQuestionIndex + 1} von ${cities.length}`;
+
+      document.getElementById("score").textContent =
+        `Punkte: ${score}`;
+
+      document.getElementById("hint").textContent = city.hint;
+      document.getElementById("feedback").textContent = "";
+      document.getElementById("nextButton").style.display = "none";
+
+      const answersDiv = document.getElementById("answers");
+      answersDiv.innerHTML = "";
+
+      const shuffledChoices = shuffleArray([...city.choices]);
+
+      shuffledChoices.forEach(choice => {
+        const button = document.createElement("button");
+        button.textContent = choice;
+        button.onclick = () => checkAnswer(choice, button);
+        answersDiv.appendChild(button);
+      });
+    }
+
+    function checkAnswer(selectedAnswer, clickedButton) {
+      const city = cities[currentQuestionIndex];
+      const allButtons = document.querySelectorAll(".answers button");
+
+      allButtons.forEach(button => {
+        button.disabled = true;
+
+        if (button.textContent === city.name) {
+          button.classList.add("correct");
+        }
+      });
+
+      if (selectedAnswer === city.name) {
+        score++;
+        clickedButton.classList.add("correct");
+        document.getElementById("feedback").textContent =
+          `Richtig! Das ist ${city.name} in ${city.country}.`;
+      } else {
+        clickedButton.classList.add("wrong");
+        document.getElementById("feedback").textContent =
+          `Leider falsch. Richtig wäre ${city.name} in ${city.country}.`;
+      }
+
+      document.getElementById("score").textContent = `Punkte: ${score}`;
+      showCityOnMap(city);
+
+      if (currentQuestionIndex < cities.length - 1) {
+        document.getElementById("nextButton").style.display = "inline-block";
+      } else {
+        showFinalResult();
+      }
+    }
+
+    function showCityOnMap(city) {
+      map.flyTo([city.lat, city.lng], 7);
+
+      if (marker) {
+        map.removeLayer(marker);
+      }
+
+      marker = L.marker([city.lat, city.lng])
+        .addTo(map)
+        .bindPopup(`<strong>${city.name}</strong><br>${city.country}`)
+        .openPopup();
+    }
+
+    function nextQuestion() {
+      currentQuestionIndex++;
+      showQuestion();
+    }
+
+    function showFinalResult() {
+      const feedback = document.getElementById("feedback");
+
+      feedback.textContent =
+        `Quiz beendet! Du hast ${score} von ${cities.length} Punkten erreicht.`;
+
+      document.getElementById("nextButton").style.display = "none";
+      document.getElementById("restartButton").style.display = "inline-block";
+    }
+
+    function restartQuiz() {
+      currentQuestionIndex = 0;
+      score = 0;
+
+      document.getElementById("restartButton").style.display = "none";
+
+      if (marker) {
+        map.removeLayer(marker);
+        marker = null;
+      }
+
+      map.setView([50.5, 10.5], 4);
+      showQuestion();
+    }
+
+    function shuffleArray(array) {
+      return array.sort(() => Math.random() - 0.5);
+    }
+
+    showQuestion();
+  </script>
+</body>
+</html>
