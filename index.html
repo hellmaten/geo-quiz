@@ -279,14 +279,14 @@
 
 <body>
   <header>
-    <h1>Kurdish Cities Quiz</h1>
-    <p>Bajarên Kurdî • شارە کوردییەکان</p>
+    <h1>Kurdistan Cities Quiz</h1>
+    <p>Bajarên Kurdî • شارە کوردستانییەکان</p>
   </header>
 
   <main>
     <section class="quiz-card">
       <div class="status-row">
-        <div id="progress">Question 1 of 20</div>
+        <div id="progress">Question 1 of 10</div>
         <div id="score">Score: 0</div>
       </div>
 
@@ -294,13 +294,13 @@
         <div class="dialect-row">
           <div class="dialect-col">
             <div class="dialect-label">Kurmancî</div>
-            <div class="question-text" id="questionKurmanji">Ev kîjan bajar e?</div>
+            <div class="question-text" id="questionKurmanji"></div>
             <div class="hint-text" id="hintKurmanji"></div>
           </div>
 
           <div class="dialect-col sorani-col">
             <div class="dialect-label">سۆرانی</div>
-            <div class="question-text sorani" id="questionSorani">ئەم شارە کامە؟</div>
+            <div class="question-text sorani" id="questionSorani"></div>
             <div class="hint-text sorani" id="hintSorani"></div>
           </div>
         </div>
@@ -312,12 +312,12 @@
       </div>
 
       <div id="deTranslation" class="translation-panel">
-        <p><strong>Frage:</strong> <span id="questionDe">Welche Stadt ist gemeint?</span></p>
+        <p><strong>Frage:</strong> <span id="questionDe"></span></p>
         <p><strong>Hinweis:</strong> <span id="hintDe"></span></p>
       </div>
 
       <div id="enTranslation" class="translation-panel">
-        <p><strong>Question:</strong> <span id="questionEn">Which city is meant?</span></p>
+        <p><strong>Question:</strong> <span id="questionEn"></span></p>
         <p><strong>Hint:</strong> <span id="hintEn"></span></p>
       </div>
 
@@ -340,10 +340,12 @@
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
   <script>
+    const QUESTIONS_PER_SESSION = 10;
+
     const questionTexts = [
       {
         kurmanji: "Ev kîjan bajar e?",
-        sorani: "ئەم شارە کامە؟",
+        sorani: "ئەم شارە کامەیە؟",
         de: "Welche Stadt ist gemeint?",
         en: "Which city is meant?"
       },
@@ -355,13 +357,13 @@
       },
       {
         kurmanji: "Tu dizanî ev bajar kîjan e?",
-        sorani: "دەزانیت ئەم شارە کامە؟",
+        sorani: "دەزانیت ئەم شارە کامەیە؟",
         de: "Weißt du, welche Stadt das ist?",
         en: "Do you know which city this is?"
       },
       {
         kurmanji: "Li gorî vê agahiyê, ev kîjan bajar e?",
-        sorani: "بەپێی ئەم زانیارییە، ئەم شارە کامە؟",
+        sorani: "بەپێی ئەم زانیارییە، ئەم شارە کامەیە؟",
         de: "Welche Stadt passt zu diesem Hinweis?",
         en: "Which city matches this hint?"
       }
@@ -372,265 +374,445 @@
         id: "erbil",
         nameSorani: "هەولێر",
         nameKurmanji: "Hewlêr",
-        country: "Iraq",
         region: "Başûr / باشوور",
         lat: 36.1911,
         lng: 44.0092,
-        hintSorani: "ئەم شارە بە قەڵای کۆنی خۆی ناسراوە.",
-        hintKurmanji: "Ev bajar bi qeleya xwe ya kevn tê naskirin.",
-        hintDe: "Diese Stadt ist bekannt für ihre alte Zitadelle.",
-        hintEn: "This city is known for its old citadel."
+        facts: [
+          {
+            hintSorani: "لە ناوەندی ئەم شارەدا قەڵایەکی زۆر کۆن هەیە کە لەسەر گردێکی بەرز دروست کراوە.",
+            hintKurmanji: "Di navenda vî bajarî de qeleheke pir kevn heye ku li ser girê bilind hatiye avakirin.",
+            hintDe: "Im Zentrum dieser Stadt steht eine sehr alte Zitadelle auf einem erhöhten Hügel.",
+            hintEn: "In the center of this city stands a very old citadel on a raised mound."
+          },
+          {
+            hintSorani: "منارە یەکێکە لە شوێنە گەورە و ناسراوەکانی ئەم شارە.",
+            hintKurmanji: "Parka Sami Abdulrahman yek ji cihên mezin û naskirî yên vî bajarî ye.",
+            hintDe: "Der Sami-Abdulrahman-Park ist einer der großen bekannten Orte dieser Stadt.",
+            hintEn: "Sami Abdulrahman Park is one of the large well-known places in this city."
+          }
+        ]
       },
       {
         id: "sulaimani",
         nameSorani: "سلێمانی",
         nameKurmanji: "Silêmanî",
-        country: "Iraq",
         region: "Başûr / باشوور",
         lat: 35.5570,
         lng: 45.4350,
-        hintSorani: "ئەم شارە وەک ناوەندێکی گرنگی کولتووری ناسراوە.",
-        hintKurmanji: "Ev bajar wek navendeke girîng a çandî tê naskirin.",
-        hintDe: "Diese Stadt gilt als ein wichtiges kulturelles Zentrum.",
-        hintEn: "This city is considered an important cultural center."
+        facts: [
+          {
+            hintSorani: "ئەم شارە بە ئەدەب، کتێب و فێستیڤاڵی گەلاوێژ پەیوەندیدارە.",
+            hintKurmanji: "Ev bajar bi wêje, pirtûk û Festîvala Gelawêjê ve girêdayî ye.",
+            hintDe: "Diese Stadt ist mit Literatur, Büchern und dem Galawezh-Festival verbunden.",
+            hintEn: "This city is connected with literature, books, and the Galawezh Festival."
+          },
+          {
+            hintSorani: "چیای ئەزمەر و گۆیژە لە نیشانە ناسراوەکانی دەوروبەری ئەم شارەن.",
+            hintKurmanji: "Çiyayên Azmar û Goizha ji nîşaneyên naskirî yên derdora vî bajarî ne.",
+            hintDe: "The Azmar and Goizha mountains are well-known landmarks around this city.",
+            hintEn: "The Azmar and Goizha mountains are well-known landmarks around this city."
+          }
+        ]
       },
       {
         id: "duhok",
         nameSorani: "دهۆک",
         nameKurmanji: "Dihok",
-        country: "Iraq",
         region: "Başûr / باشوور",
         lat: 36.8660,
         lng: 42.9890,
-        hintSorani: "ئەم شارە نزیکی چیاکانە و بە دەوروبەری جوانی ناسراوە.",
-        hintKurmanji: "Ev bajar nêzî çiyayan e û bi derdora xwe ya xweşik tê naskirin.",
-        hintDe: "Diese Stadt liegt nahe Bergen und ist für ihre schöne Umgebung bekannt.",
-        hintEn: "This city is close to mountains and known for its beautiful surroundings."
+        facts: [
+          {
+            hintSorani: "دەریاچە و بەنداوی ئەم شارە یەکێکە لە شوێنە ئارام و ناسراوەکانی.",
+            hintKurmanji: "Gol û bendava vî bajarî yek ji cihên aram û naskirî yên wî ye.",
+            hintDe: "Der See und der Damm dieser Stadt gehören zu ihren bekannten ruhigen Orten.",
+            hintEn: "The lake and dam of this city are among its well-known peaceful places."
+          },
+          {
+            hintSorani: "چیای زاوا لە شوێنە ناسراوەکانی دەوروبەری ئەم شارەیە.",
+            hintKurmanji: "Çiyayê Zawa yek ji cihên naskirî yên derdora vî bajarî ye.",
+            hintDe: "Zawa Mountain is one of the well-known places around this city.",
+            hintEn: "Zawa Mountain is one of the well-known places around this city."
+          }
+        ]
       },
       {
         id: "kirkuk",
         nameSorani: "کەرکووک",
         nameKurmanji: "Kerkûk",
-        country: "Iraq",
         region: "Başûr / باشوور",
         lat: 35.4681,
         lng: 44.3922,
-        hintSorani: "ئەم شارە مێژووییە بە نەوت و قەڵای کۆنی خۆی ناسراوە.",
-        hintKurmanji: "Ev bajara dîrokî bi neftê û qeleya xwe ya kevn jî tê naskirin.",
-        hintDe: "Diese historische Stadt ist auch für Öl und ihre alte Zitadelle bekannt.",
-        hintEn: "This historic city is also known for oil and its old citadel."
+        facts: [
+          {
+            hintSorani: "قەڵای کۆنی ئەم شارە لەسەر شوێنێکی بەرز و مێژوویی دروست کراوە.",
+            hintKurmanji: "Qeleya kevn a vî bajarî li ser cihêkî bilind û dîrokî hatiye avakirin.",
+            hintDe: "Die alte Zitadelle dieser Stadt steht auf einem erhöhten historischen Ort.",
+            hintEn: "The old citadel of this city stands on a raised historic site."
+          },
+          {
+            hintSorani: "قیشلە یەکێکە لە بینا مێژووییە ناسراوەکانی ئەم شارە.",
+            hintKurmanji: "Qişle yek ji avahiyên dîrokî û naskirî yên vî bajarî ye.",
+            hintDe: "The Qishla is one of the well-known historical buildings of this city.",
+            hintEn: "The Qishla is one of the well-known historical buildings of this city."
+          }
+        ]
       },
       {
         id: "halabja",
         nameSorani: "هەڵەبجە",
         nameKurmanji: "Helebce",
-        country: "Iraq",
         region: "Başûr / باشوور",
         lat: 35.1778,
         lng: 45.9861,
-        hintSorani: "ئەم شارە نزیکی سنووری ئێرانە و شوێنێکی گرنگی یادەوەرییە.",
-        hintKurmanji: "Ev bajar nêzî sînorê Îranê ye û cihêke girîng a bîranînê ye.",
-        hintDe: "Diese Stadt liegt nahe der iranischen Grenze und ist ein wichtiger Erinnerungsort.",
-        hintEn: "This city is near the Iranian border and is an important place of remembrance."
+        facts: [
+          {
+            hintSorani: "ئەم شارە بە سروشتی شاخاوی و نزیکی هەورامان ناسراوە.",
+            hintKurmanji: "Ev bajar bi xwezaya xwe ya çiyayî û nêzîkatiya Hewramanê tê naskirin.",
+            hintDe: "Diese Stadt ist für ihre bergige Natur und ihre Nähe zu Hawraman bekannt.",
+            hintEn: "This city is known for its mountain landscape and its closeness to Hawraman."
+          },
+          {
+            hintSorani: "دەوروبەری ئەم شارە بە شوێنە سروشتییەکانی وەک ئەحمەدئاوا ناسراوە.",
+            hintKurmanji: "Derdora vî bajarî bi cihên xwezayî wek Ahmad Awa tê naskirin.",
+            hintDe: "The area around this city is known for natural places such as Ahmad Awa.",
+            hintEn: "The area around this city is known for natural places such as Ahmad Awa."
+          }
+        ]
       },
       {
         id: "zakho",
         nameSorani: "زاخۆ",
         nameKurmanji: "Zaxo",
-        country: "Iraq",
         region: "Başûr / باشوور",
         lat: 37.1445,
         lng: 42.6872,
-        hintSorani: "ئەم شارە نزیکی سنووری تورکیاە و بە پردی دەلال ناسراوە.",
-        hintKurmanji: "Ev bajar nêzî sînorê Tirkiyeyê ye û bi Pira Delal tê naskirin.",
-        hintDe: "Diese Stadt liegt nahe der türkischen Grenze und ist für die Delal-Brücke bekannt.",
-        hintEn: "This city is near the Turkish border and known for the Delal Bridge."
+        facts: [
+          {
+            hintSorani: "پردی دەلال یەکێکە لە نیشانە زۆر ناسراوەکانی ئەم شارە.",
+            hintKurmanji: "Pira Delal yek ji nîşaneyên herî naskirî yên vî bajarî ye.",
+            hintDe: "The Delal Bridge is one of the most famous landmarks of this city.",
+            hintEn: "The Delal Bridge is one of the most famous landmarks of this city."
+          },
+          {
+            hintSorani: "ڕووباری خابوور لە ژیانی شار و دیمەنی ئەم شوێنەدا گرنگە.",
+            hintKurmanji: "Çemê Xabûr di jiyana bajar û dîmena vî cihî de girîng e.",
+            hintDe: "The Khabur River is important for the life and landscape of this city.",
+            hintEn: "The Khabur River is important for the life and landscape of this city."
+          }
+        ]
       },
       {
         id: "koya",
         nameSorani: "کۆیە",
         nameKurmanji: "Koyê",
-        country: "Iraq",
         region: "Başûr / باشوور",
         lat: 36.0847,
         lng: 44.6278,
-        hintSorani: "ئەم شارە لە نێوان هەولێر و سلێمانی دایە.",
-        hintKurmanji: "Ev bajar di navbera Hewlêr û Silêmaniyê de ye.",
-        hintDe: "Diese Stadt liegt zwischen Hewlêr und Silêmanî.",
-        hintEn: "This city is located between Erbil and Sulaimani."
+        facts: [
+          {
+            hintSorani: "چیای هەیبەت سوڵتان یەکێکە لە نیشانە سروشتییەکانی دەوروبەری ئەم شارە.",
+            hintKurmanji: "Çiyayê Heybet Sultan yek ji nîşaneyên xwezayî yên derdora vî bajarî ye.",
+            hintDe: "Haibat Sultan Mountain is one of the natural landmarks around this city.",
+            hintEn: "Haibat Sultan Mountain is one of the natural landmarks around this city."
+          },
+          {
+            hintSorani: "زانکۆی کۆیە یەکێکە لە شوێنە فێرکارییە ناسراوەکانی ئەم شارە.",
+            hintKurmanji: "Zanîngeha Koyê yek ji cihên perwerdeyî yên naskirî yên vî bajarî ye.",
+            hintDe: "Koya University is one of the known educational places in this city.",
+            hintEn: "Koya University is one of the known educational places in this city."
+          }
+        ]
       },
       {
         id: "rania",
         nameSorani: "ڕانیە",
         nameKurmanji: "Ranya",
-        country: "Iraq",
         region: "Başûr / باشوور",
         lat: 36.2550,
         lng: 44.8830,
-        hintSorani: "ئەم شارە نزیکی دەریاچەی دوکان و چیاکانە.",
-        hintKurmanji: "Ev bajar nêzî Gola Dokanê û çiyayan e.",
-        hintDe: "Diese Stadt liegt in der Nähe des Dokan-Sees und von Bergen.",
-        hintEn: "This city is near Lake Dokan and mountains."
+        facts: [
+          {
+            hintSorani: "دەریاچەی دوکان لە دیمەنی دەوروبەری ئەم شارەدا گرنگە.",
+            hintKurmanji: "Gola Dokanê di dîmena derdora vî bajarî de girîng e.",
+            hintDe: "Lake Dukan is important for the landscape around this city.",
+            hintEn: "Lake Dukan is important for the landscape around this city."
+          },
+          {
+            hintSorani: "دەشتی ئەم شارە بە شوێنە کۆن و ئارکیۆلۆژییەکانی ناسراوە.",
+            hintKurmanji: "Deşta vî bajarî bi cihên kevn û arkeolojîk tê naskirin.",
+            hintDe: "The plain around this city is known for old archaeological sites.",
+            hintEn: "The plain around this city is known for old archaeological sites."
+          }
+        ]
       },
       {
         id: "akre",
         nameSorani: "ئاکرێ",
         nameKurmanji: "Akrê",
-        country: "Iraq",
         region: "Başûr / باشوور",
         lat: 36.7470,
         lng: 43.8940,
-        hintSorani: "ئەم شارە شاخاویە بە تایبەتی بە ئاهەنگەکانی نەورۆز ناسراوە.",
-        hintKurmanji: "Ev bajara çiyayî bi taybetî bi şahiyên Newrozê tê naskirin.",
-        hintDe: "Diese Bergstadt ist besonders für Newroz-Feiern bekannt.",
-        hintEn: "This mountain city is especially known for Newroz celebrations."
+        facts: [
+          {
+            hintSorani: "ئەم شارە بە ئاهەنگەکانی نەورۆز و مەشخەڵەکانی سەر شاخ ناسراوە.",
+            hintKurmanji: "Ev bajar bi şahiyên Newrozê û agirên li ser çiyê tê naskirin.",
+            hintDe: "Diese Stadt ist für Newroz celebrations and torch lights on the mountain known.",
+            hintEn: "This city is known for Newroz celebrations and torch lights on the mountain."
+          },
+          {
+            hintSorani: "بەشی کۆنی ئەم شارە لە نێوان شاخ و کۆڵانە تەسکەکاندا ناسراوە.",
+            hintKurmanji: "Beşa kevn a vî bajarî bi çiya û kolanên teng tê naskirin.",
+            hintDe: "The old part of this city is known for mountains and narrow streets.",
+            hintEn: "The old part of this city is known for mountains and narrow streets."
+          }
+        ]
       },
       {
         id: "amed",
         nameSorani: "ئامەد",
         nameKurmanji: "Amed",
-        country: "Turkey",
         region: "Bakur / باکوور",
         lat: 37.9144,
         lng: 40.2306,
-        hintSorani: "ئەم شارە بە دیوارە کۆنەکانی نزیک ڕووباری دیجلە ناسراوە.",
-        hintKurmanji: "Ev bajar bi dîwarên xwe yên kevn li nêzî Dîcleyê tê naskirin.",
-        hintDe: "Diese Stadt ist bekannt für ihre alten Stadtmauern am Tigris.",
-        hintEn: "This city is known for its old city walls near the Tigris."
+        facts: [
+          {
+            hintSorani: "دیوارە کۆنەکانی ئەم شارە یەکێکە لە ناسراوترین نیشانە مێژووییەکانی.",
+            hintKurmanji: "Dîwarên kevn ên vî bajarî yek ji nîşaneyên dîrokî yên herî naskirî ne.",
+            hintDe: "The old city walls are one of the most famous historical landmarks of this city.",
+            hintEn: "The old city walls are one of the most famous historical landmarks of this city."
+          },
+          {
+            hintSorani: "خانەی دەنگبێژان لەم شارەدا کولتووری گۆرانی و چیرۆکی دەنگی زیندوو دەهێڵێتەوە.",
+            hintKurmanji: "Mala Dengbêjan li vî bajarî çanda stran û çîroka devkî zindî dihêle.",
+            hintDe: "The Dengbêj House in this city keeps oral singing and storytelling alive.",
+            hintEn: "The Dengbêj House in this city keeps oral singing and storytelling alive."
+          }
+        ]
       },
       {
         id: "van",
         nameSorani: "وان",
         nameKurmanji: "Wan",
-        country: "Turkey",
         region: "Bakur / باکوور",
         lat: 38.5012,
         lng: 43.3730,
-        hintSorani: "ئەم شارە لە کنار دەریاچەی گەورەی وانە.",
-        hintKurmanji: "Ev bajar li kêleka Gola Wanê ye.",
-        hintDe: "Diese Stadt liegt am großen Van-See.",
-        hintEn: "This city is located by the large Lake Van."
+        facts: [
+          {
+            hintSorani: "دەریاچەیەکی گەورە و خوێناوی لە دیمەنی ناسراوی ئەم شارەدایە.",
+            hintKurmanji: "Goleke mezin û şor di dîmena naskirî ya vî bajarî de ye.",
+            hintDe: "A large salty lake is part of the famous landscape of this city.",
+            hintEn: "A large salty lake is part of the famous landscape of this city."
+          },
+          {
+            hintSorani: "قەڵای کۆنی ئەم شارە لەسەر بەردەکان و لە نزیک دەریاچەکە ناسراوە.",
+            hintKurmanji: "Qeleya kevn a vî bajarî li ser keviran û nêzî golê tê naskirin.",
+            hintDe: "The old castle of this city is known for its rocky location near the lake.",
+            hintEn: "The old castle of this city is known for its rocky location near the lake."
+          }
+        ]
       },
       {
         id: "mardin",
         nameSorani: "مێردین",
         nameKurmanji: "Mêrdîn",
-        country: "Turkey",
         region: "Bakur / باکوور",
         lat: 37.3122,
         lng: 40.7351,
-        hintSorani: "ئەم شارە بە خانووە بەردینە کۆنەکانی لەسەر لێژیەک ناسراوە.",
-        hintKurmanji: "Ev bajar bi xaniyên kevirî yên kevn li ser alîyekî çiyê tê naskirin.",
-        hintDe: "Diese Stadt ist für alte Steinhäuser an einem Hang bekannt.",
-        hintEn: "This city is known for old stone houses on a hillside."
+        facts: [
+          {
+            hintSorani: "ئەم شارە بە خانووە بەردینە زەردەکانی و کۆڵانە کۆنەکانی ناسراوە.",
+            hintKurmanji: "Ev bajar bi xaniyên kevirî yên zer û kolanên kevn tê naskirin.",
+            hintDe: "This city is known for yellow stone houses and old streets.",
+            hintEn: "This city is known for yellow stone houses and old streets."
+          },
+          {
+            hintSorani: "زنجیرییە مەدرەسە یەکێکە لە شوێنە ناسراوەکانی ئەم شارە.",
+            hintKurmanji: "Medreseya Zinciriye yek ji cihên naskirî yên vî bajarî ye.",
+            hintDe: "Zinciriye Madrasa is one of the well-known places in this city.",
+            hintEn: "Zinciriye Madrasa is one of the well-known places in this city."
+          }
+        ]
       },
       {
         id: "hakkari",
         nameSorani: "جۆلەمێرگ",
         nameKurmanji: "Colemêrg",
-        country: "Turkey",
         region: "Bakur / باکوور",
         lat: 37.5744,
         lng: 43.7408,
-        hintSorani: "ئەم شارە لە ناوچەیەکی زۆر شاخاوی دایە.",
-        hintKurmanji: "Ev bajar li herêmeke pir çiyayî ye.",
-        hintDe: "Diese Stadt liegt in einer sehr bergigen Region.",
-        hintEn: "This city is located in a very mountainous region."
+        facts: [
+          {
+            hintSorani: "چیای جیلۆ و سات لە دیمەنی شاخاوی ئەم شارەدا زۆر گرنگن.",
+            hintKurmanji: "Çiyayên Cilo û Sat di dîmena çiyayî ya vî bajarî de pir girîng in.",
+            hintDe: "The Cilo and Sat mountains are very important in the mountain landscape of this city.",
+            hintEn: "The Cilo and Sat mountains are very important in the mountain landscape of this city."
+          },
+          {
+            hintSorani: "ئەم شارە بە دیمەنی بەرزی شاخ و ناوچەی سارد و شاخاوی ناسراوە.",
+            hintKurmanji: "Ev bajar bi dîmena çiyayên bilind û herêma sar û çiyayî tê naskirin.",
+            hintDe: "This city is known for high mountains and a cold mountainous landscape.",
+            hintEn: "This city is known for high mountains and a cold mountainous landscape."
+          }
+        ]
       },
       {
         id: "batman",
         nameSorani: "باتمان",
         nameKurmanji: "Êlih / Batman",
-        country: "Turkey",
         region: "Bakur / باکوور",
         lat: 37.8812,
         lng: 41.1351,
-        hintSorani: "ئەم شارە لە باشووری ڕۆژهەڵاتی تورکیاە و نزیکی ناوچەی دیجلەیە.",
-        hintKurmanji: "Ev bajar li başûrê rojhilatê Tirkiyeyê ye û nêzî herêma Dîcleyê ye.",
-        hintDe: "Diese Stadt liegt im Südosten der Türkei und nahe dem Tigris-Gebiet.",
-        hintEn: "This city is in southeastern Turkey and near the Tigris region."
+        facts: [
+          {
+            hintSorani: "پردی مەلابادی یەکێکە لە نیشانە مێژووییەکانی نزیکی ئەم شارە.",
+            hintKurmanji: "Pira Malabadî yek ji nîşaneyên dîrokî yên nêzî vî bajarî ye.",
+            hintDe: "The Malabadi Bridge is one of the historical landmarks near this city.",
+            hintEn: "The Malabadi Bridge is one of the historical landmarks near this city."
+          },
+          {
+            hintSorani: "ئەم شارە بە پردێکی بەردینی کۆن و کەوانەیەکی گەورە پەیوەندیدارە.",
+            hintKurmanji: "Ev bajar bi pireke kevirî ya kevn û kemereke mezin ve girêdayî ye.",
+            hintDe: "This city is connected with an old stone bridge and a large arch.",
+            hintEn: "This city is connected with an old stone bridge and a large arch."
+          }
+        ]
       },
       {
         id: "qamishli",
         nameSorani: "قامیشلۆ",
         nameKurmanji: "Qamişlo",
-        country: "Syria",
         region: "Rojava / ڕۆژاوا",
         lat: 37.0531,
         lng: 41.2293,
-        hintSorani: "ئەم شارە لە باکووری ڕۆژهەڵاتی سووریاە و نزیکی سنووری تورکیاە.",
-        hintKurmanji: "Ev bajar li bakurê rojhilatê Sûriyeyê ye û nêzî sînorê Tirkiyeyê ye.",
-        hintDe: "Diese Stadt liegt im Nordosten Syriens nahe der türkischen Grenze.",
-        hintEn: "This city is in northeastern Syria near the Turkish border."
+        facts: [
+          {
+            hintSorani: "ڕووباری جەغجەغ لە دیمەن و ژیانی ئەم شارەدا گرنگە.",
+            hintKurmanji: "Çemê Cexcexê di dîmen û jiyana vî bajarî de girîng e.",
+            hintDe: "The Jaghjagh River is important for the landscape and life of this city.",
+            hintEn: "The Jaghjagh River is important for the landscape and life of this city."
+          },
+          {
+            hintSorani: "ئەم شارە بە هونەرمەندانی کورد و موزیکەوە پەیوەندییەکی بەهێزی هەیە.",
+            hintKurmanji: "Ev bajar bi hunermendên Kurd û muzîkê re têkiliyeke xurt heye.",
+            hintDe: "This city has a strong connection with Kurdish artists and music.",
+            hintEn: "This city has a strong connection with Kurdish artists and music."
+          }
+        ]
       },
       {
         id: "kobane",
         nameSorani: "کۆبانێ",
         nameKurmanji: "Kobanê",
-        country: "Syria",
         region: "Rojava / ڕۆژاوا",
         lat: 36.8908,
         lng: 38.3535,
-        hintSorani: "ئەم شارە لە باکووری سووریاە و نزیکی سنووری تورکیاە.",
-        hintKurmanji: "Ev bajar li bakurê Sûriyeyê ye û nêzî sînorê Tirkiyeyê ye.",
-        hintDe: "Diese Stadt liegt in Nordsyrien nahe der türkischen Grenze.",
-        hintEn: "This city is in northern Syria near the Turkish border."
+        facts: [
+          {
+            hintSorani: "نووسەری کورد جان دۆست لەم شارەدا لەدایک بووە.",
+            hintKurmanji: "Nivîskarê Kurd Jan Dost li vî bajarî ji dayik bûye.",
+            hintDe: "The Kurdish writer Jan Dost was born in this city.",
+            hintEn: "The Kurdish writer Jan Dost was born in this city."
+          },
+          {
+            hintSorani: "ئەم شارە لە یادەوەریی کوردیدا وەک نیشانەی خۆڕاگری ناسراوە.",
+            hintKurmanji: "Ev bajar di bîranîna Kurdî de wek nîşaneya berxwedanê tê naskirin.",
+            hintDe: "This city is known in Kurdish memory as a symbol of resistance.",
+            hintEn: "This city is known in Kurdish memory as a symbol of resistance."
+          }
+        ]
       },
       {
         id: "amuda",
         nameSorani: "عامودێ",
         nameKurmanji: "Amûdê",
-        country: "Syria",
         region: "Rojava / ڕۆژاوا",
         lat: 37.1041,
         lng: 40.9300,
-        hintSorani: "ئەم شارۆچکەیە لە ناوچەی جەزیرە دایە.",
-        hintKurmanji: "Ev bajara biçûk li herêma Cizîrê ye.",
-        hintDe: "Diese kleinere Stadt liegt in der Jazira-Region.",
-        hintEn: "This smaller city is located in the Jazira region."
+        facts: [
+          {
+            hintSorani: "ئەم شارە یادەوەریی سووتانی سینەمایەکی خەمناک لە ساڵی ١٩٦٠ هەڵگرتووە.",
+            hintKurmanji: "Ev bajar bîranîna şewata sinemayeke xemgîn a sala 1960 hildigire.",
+            hintDe: "This city carries the memory of a tragic cinema fire in 1960.",
+            hintEn: "This city carries the memory of a tragic cinema fire in 1960."
+          },
+          {
+            hintSorani: "نووسەری کورد حەلیم یوسف لەم شارەدا لەدایک بووە.",
+            hintKurmanji: "Nivîskarê Kurd Halim Youssef li vî bajarî ji dayik bûye.",
+            hintDe: "The Kurdish writer Halim Youssef was born in this city.",
+            hintEn: "The Kurdish writer Halim Youssef was born in this city."
+          }
+        ]
       },
       {
         id: "mahabad",
         nameSorani: "مەهاباد",
         nameKurmanji: "Mehabad",
-        country: "Iran",
         region: "Rojhilat / ڕۆژهەڵات",
         lat: 36.7631,
         lng: 45.7222,
-        hintSorani: "ئەم شارە لە ڕۆژئاوای ئێرانە و لە مێژووی کوردیدا گرنگە.",
-        hintKurmanji: "Ev bajar li rojavayê Îranê ye û di dîroka Kurdî de girîng e.",
-        hintDe: "Diese Stadt im Westen Irans hat eine wichtige Bedeutung in der kurdischen Geschichte.",
-        hintEn: "This city in western Iran has an important place in Kurdish history."
+        facts: [
+          {
+            hintSorani: "ئەم شارە بە شاعیرانی کورد وەک هێمن و هەژار پەیوەندیدارە.",
+            hintKurmanji: "Ev bajar bi helbestvanên Kurd wek Hêmin û Hejar ve girêdayî ye.",
+            hintDe: "This city is connected with Kurdish poets such as Hêmin and Hejar.",
+            hintEn: "This city is connected with Kurdish poets such as Hêmin and Hejar."
+          },
+          {
+            hintSorani: "ناوی کۆنی ئەم شارە بە واتای بیرەوەریی سەرچاوەی سارد پەیوەندیدارە.",
+            hintKurmanji: "Navê kevn ê vî bajarî bi wateya kaniya sar ve girêdayî ye.",
+            hintDe: "The old name of this city is connected with the idea of a cold spring.",
+            hintEn: "The old name of this city is connected with the idea of a cold spring."
+          }
+        ]
       },
       {
         id: "sanandaj",
         nameSorani: "سنە",
         nameKurmanji: "Sine",
-        country: "Iran",
         region: "Rojhilat / ڕۆژهەڵات",
         lat: 35.3140,
         lng: 46.9923,
-        hintSorani: "ئەم شارە پایتەختی پارێزگای کوردستانی ئێرانە.",
-        hintKurmanji: "Ev bajar paytexta parêzgeha Kurdistanê ya Îranê ye.",
-        hintDe: "Diese Stadt ist die Hauptstadt der iranischen Provinz Kurdistan.",
-        hintEn: "This city is the capital of Iran's Kurdistan Province."
+        facts: [
+          {
+            hintSorani: "چیای ئاویەر یان ئەبیدەر لە دیمەنی ناسراوی ئەم شارەدا گرنگە.",
+            hintKurmanji: "Çiyayê Awîdar an Abidar di dîmena naskirî ya vî bajarî de girîng e.",
+            hintDe: "Mount Awidar or Abidar is important in the well-known landscape of this city.",
+            hintEn: "Mount Awidar or Abidar is important in the well-known landscape of this city."
+          },
+          {
+            hintSorani: "ئەم شارە بە موزیک و کولتووری گۆرانییەوە پەیوەندییەکی بەهێزی هەیە.",
+            hintKurmanji: "Ev bajar bi muzîk û çanda stranê re têkiliyeke xurt heye.",
+            hintDe: "This city has a strong connection with music and singing culture.",
+            hintEn: "This city has a strong connection with music and singing culture."
+          }
+        ]
       },
       {
         id: "kermanshah",
         nameSorani: "کرماشان",
         nameKurmanji: "Kirmaşan",
-        country: "Iran",
         region: "Rojhilat / ڕۆژهەڵات",
         lat: 34.3142,
         lng: 47.0650,
-        hintSorani: "ئەم شارە بە شوێنە مێژووییەکانی وەک تاقی بستان ناسراوە.",
-        hintKurmanji: "Ev bajar bi cihên dîrokî wek Taq-e Bostan tê naskirin.",
-        hintDe: "Diese Stadt ist bekannt für historische Orte wie Taq-e Bostan.",
-        hintEn: "This city is known for historic sites such as Taq-e Bostan."
+        facts: [
+          {
+            hintSorani: "تاقی بستان یەکێکە لە شوێنە مێژووییە زۆر ناسراوەکانی نزیکی ئەم شارە.",
+            hintKurmanji: "Taq-e Bostan yek ji cihên dîrokî yên pir naskirî yên nêzî vî bajarî ye.",
+            hintDe: "Taq-e Bostan is one of the very famous historical sites near this city.",
+            hintEn: "Taq-e Bostan is one of the very famous historical sites near this city."
+          },
+          {
+            hintSorani: "بێستوون یەکێکە لە شوێنە کۆن و مێژووییە گرنگەکانی دەوروبەری ئەم شارە.",
+            hintKurmanji: "Bîstûn yek ji cihên kevn û dîrokî yên girîng ên derdora vî bajarî ye.",
+            hintDe: "Bisotun is one of the important ancient historical sites around this city.",
+            hintEn: "Bisotun is one of the important ancient historical sites around this city."
+          }
+        ]
       }
     ];
 
-    let quizCities = shuffleArray([...cityData]);
+    let quizQuestions = [];
     let currentQuestionIndex = 0;
     let score = 0;
     let marker = null;
@@ -643,12 +825,31 @@
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
     }).addTo(map);
 
+    function createQuizSession() {
+      const selectedCities = shuffleArray([...cityData]).slice(0, QUESTIONS_PER_SESSION);
+
+      quizQuestions = selectedCities.map(city => {
+        const randomFact = city.facts[Math.floor(Math.random() * city.facts.length)];
+
+        return {
+          city: city,
+          fact: randomFact
+        };
+      });
+
+      currentQuestionIndex = 0;
+      score = 0;
+      lastQuestionTextIndex = -1;
+    }
+
     function showQuestion() {
-      const city = quizCities[currentQuestionIndex];
+      const quizItem = quizQuestions[currentQuestionIndex];
+      const city = quizItem.city;
+      const fact = quizItem.fact;
       const questionText = getRandomQuestionText();
 
       document.getElementById("progress").textContent =
-        `Question ${currentQuestionIndex + 1} of ${quizCities.length}`;
+        `Question ${currentQuestionIndex + 1} of ${quizQuestions.length}`;
 
       document.getElementById("score").textContent =
         `Score: ${score}`;
@@ -658,10 +859,10 @@
       document.getElementById("questionDe").textContent = questionText.de;
       document.getElementById("questionEn").textContent = questionText.en;
 
-      document.getElementById("hintSorani").textContent = city.hintSorani;
-      document.getElementById("hintKurmanji").textContent = city.hintKurmanji;
-      document.getElementById("hintDe").textContent = city.hintDe;
-      document.getElementById("hintEn").textContent = city.hintEn;
+      document.getElementById("hintSorani").textContent = fact.hintSorani;
+      document.getElementById("hintKurmanji").textContent = fact.hintKurmanji;
+      document.getElementById("hintDe").textContent = fact.hintDe;
+      document.getElementById("hintEn").textContent = fact.hintEn;
 
       document.getElementById("deTranslation").style.display = "none";
       document.getElementById("enTranslation").style.display = "none";
@@ -711,7 +912,7 @@
     }
 
     function buildChoices(correctCity) {
-      const wrongChoices = quizCities.filter(city => city.id !== correctCity.id);
+      const wrongChoices = cityData.filter(city => city.id !== correctCity.id);
       const selectedWrongChoices = shuffleArray([...wrongChoices]).slice(0, 3);
 
       return shuffleArray([correctCity, ...selectedWrongChoices]);
@@ -722,7 +923,8 @@
     }
 
     function checkAnswer(selectedCityId, clickedButton) {
-      const city = quizCities[currentQuestionIndex];
+      const quizItem = quizQuestions[currentQuestionIndex];
+      const city = quizItem.city;
       const allButtons = document.querySelectorAll(".answers button");
 
       allButtons.forEach(button => {
@@ -747,7 +949,7 @@
       document.getElementById("score").textContent = `Score: ${score}`;
       showCityOnMap(city);
 
-      if (currentQuestionIndex < quizCities.length - 1) {
+      if (currentQuestionIndex < quizQuestions.length - 1) {
         document.getElementById("nextButton").style.display = "inline-block";
       } else {
         showFinalResult();
@@ -765,7 +967,6 @@
         .addTo(map)
         .bindPopup(`
           <strong>${getCityLabel(city)}</strong><br>
-          ${city.country}<br>
           ${city.region}
         `)
         .openPopup();
@@ -778,17 +979,14 @@
 
     function showFinalResult() {
       document.getElementById("feedback").innerHTML =
-        `Quiz finished!<br>Your score: ${score} out of ${quizCities.length}.`;
+        `Quiz finished!<br>Your score: ${score} out of ${quizQuestions.length}.`;
 
       document.getElementById("nextButton").style.display = "none";
       document.getElementById("restartButton").style.display = "inline-block";
     }
 
     function restartQuiz() {
-      quizCities = shuffleArray([...cityData]);
-      currentQuestionIndex = 0;
-      score = 0;
-      lastQuestionTextIndex = -1;
+      createQuizSession();
 
       document.getElementById("restartButton").style.display = "none";
 
@@ -812,6 +1010,7 @@
       return newArray;
     }
 
+    createQuizSession();
     showQuestion();
   </script>
 </body>
